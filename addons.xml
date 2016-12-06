@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+<addon id="plugin.video.developing" name="Developing" version="5.5.8" provider-name="Choehn">
+    <requires>
+		<import addon="xbmc.python" version="2.1.0" />
+        <import addon="script.module.beautifulsoup" version="3.0.8"/>
+		<import addon="script.module.simplejson" version="2.0.10" />
+        <import addon="script.common.plugin.cache" version="0.9.1"/>
+		<import addon="script.module.parsedom" version="2.5.1" />
+		<import addon="script.module.simple.downloader" version="1.9.4" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <language>en</language>
+        <summary lang="en"></summary>
+        <description lang="en">Su dung tai khoan Fshare</description>
+    </extension>
+</addon>
+</addons>
