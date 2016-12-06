@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.video.developing" name="Developing" version="5.5.8" provider-name="Choehn">
+<addon id="plugin.video.fvideo" name="FVideo" version="5.5.9" provider-name="Choehn">
     <requires>
 		<import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.beautifulsoup" version="3.0.8"/>
