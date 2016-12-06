@@ -17,6 +17,8 @@
         <language>en</language>
         <summary lang="en"></summary>
         <description lang="en">Su dung tai khoan Fshare</description>
+		<source>https://github.com/taikhoanonlinevn/all</source>
+		<email>taikhoanonlinevn@gmail.com</email>		
     </extension>
 </addon>
 </addons>
