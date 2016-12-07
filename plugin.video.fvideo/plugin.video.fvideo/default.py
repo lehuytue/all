@@ -207,19 +207,30 @@ def fshareGetFileFromFolder(strType):
     elements = xfshare.getFileFromFolder(url)
     data = json.loads(elements)
     if strType == "lazyLink":
-        for ff in data["items"]:
+        for ff in data["files"]:
             try:
                 xutils.addDir(ff["name"].encode("utf-8"), ff["href"], 'lazyLink', icon,ff["name"].encode("utf-8"))
             except:
                 pass
+        for ff in data["folders"]:
+            try:
+                xutils.addDir("["+ff["name"].encode("utf-8")+"]", ff["href"], 'fshareFolder', '','')
+            except:
+                pass            
+            
     else:
-        for ff in data["items"]:
+        for ff in data["files"]:
             try:
                 xutils.addDir(ff["name"].encode("utf-8"), ff["href"], 'lazyLink', icon,ff["name"].encode("utf-8"))
                 #xutils.addLink('', ff["name"].encode("utf-8"), 0, ff["href"], '', 'Desc ...',ck)
             except:
                 pass
-                        
+        for ff in data["folders"]:
+            try:
+                xutils.addDir("["+ff["name"].encode("utf-8")+"]", ff["href"], 'fshareFolder', '','')
+            except:
+                pass
+                                    
 def filmId():
     sinput=common.getUserInput('Film ID', '')
     hrefFile = 'https://www.fshare.vn/file/'+sinput

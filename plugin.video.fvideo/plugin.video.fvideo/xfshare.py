@@ -12,22 +12,37 @@ def getFileFromFolder(url):
     soup = BeautifulSoup(f.read(), convertEntities=BeautifulSoup.HTML_ENTITIES)    
     items = soup.findAll('div', {'class': 'pull-left file_name'})
     ret = ''
-    temp=''
+    filetemp=''
+    foldertemp=''
+    
     for item in items:
         link=item.a
         href = link['href']
         href = href.replace("http:","https:")
         name = link['title']
+        dtype = link['data-type']
+        did = link['data-id']
+        
         icon = ""
         if ('.rar' in name) or ('.srt' in name):
             t=1
         else:
             try:
-                if temp=='':
-                    temp = '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'
+                if dtype=='file':
+                    if filetemp=='':
+                        filetemp = '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'
+                    else:
+                        filetemp = filetemp + ',' + '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'
                 else:
-                    temp = temp + ',' + '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'
+                    href='https://www.fshare.vn/folder/' + did
+                    if foldertemp=='':
+                        foldertemp = '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'
+                    else:
+                        foldertemp = foldertemp + ',' + '{"name":"'+name+'","icon":"'+icon+'","href":"'+href+'"}'                    
             except:
-                pass    
-    ret = '{"items":['+temp+']}'
+                pass
+            
+    ret = '{"files":['+filetemp+'],"folders":['+foldertemp+']}'
+    
+    
     return ret
