@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 import CommonFunctions as common
 import urllib
 import urllib2
@@ -21,6 +23,7 @@ try:
 except:
     import simplejson as json
 import xfshare
+import sharingonline
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.fvideo')
 #__settings__ = xbmcaddon.Addon(id='plugin.video.developing')
@@ -62,33 +65,74 @@ def resolve_url(url):
 
 def mainMenu():
     if (ck<>None) and (ck<>""):
-        xutils.addDir('Tim kiem (Google)', '', 'gSearch', icon, '', '', 0)
-        xutils.addDir('Tim kiem (VaPhim)', '', 'vSearch', icon, '', '', 0)
-        xutils.addDir('Xem theo ID (cho ca Folder va File, vi du: KIMSN1RFJ7)', '', 'filmId', icon, '', '', 0)
+        xutils.addDir(u'Tìm kiếm (Google)', '', 'gSearch', icon, '', '', 0)
+        xutils.addDir(u'Tìm kiếm (VaPhim)', '', 'vSearch', icon, '', '', 0)
+        xutils.addDir(u'Xem theo ID (cho ca Folder va File, vi du: KIMSN1RFJ7)', '', 'filmId', icon, '', '', 0)
         #xutils.addDir('Top 250', "http://akas.imdb.com/chart/top", 'top250', icon)
+        xutils.addDir(u'Tuyển tập', "", 'sharingOnline', icon)
         xutils.addDir("Top 250", "http://vaphim.com/2011/11/14/imdb-top-250-films-cap-nhat-hang-ngay/", 'vaphimLazy', "http://vaphim.com/wp-content/uploads/2012/01/PBN.jpg?240a33", '', '', 0)
-        xutils.addDir('V - phim le', "", 'vaphimMenu', icon)
-        xutils.addDir('V - phim bo', "", 'vaphimBo', icon)
-        xutils.addDir('V - ca nhac', "", 'vaphimCanhac', icon)
-        xutils.addDir('V - suu tap', "http://vaphim.com/category/collection/", 'vaphimList', icon)
-        xutils.addDir('Chia se cho nhau', "", 'sharingTogether', icon)
-        xutils.addDir('Thu link', "", 'testLink', icon)
-        xutils.addDir('Cau hinh FVideo', "", 'config', icon)
+        xutils.addDir(u'V - Phim lẻ', "", 'vaphimMenu', icon)
+        xutils.addDir(u'V - Phim bộ', "", 'vaphimBo', icon)
+        xutils.addDir(u'V - Ca nhạc', "", 'vaphimCanhac', icon)
+        xutils.addDir(u'V - Sưu tập', "http://vaphim.com/category/collection/", 'vaphimList', icon)
+        xutils.addDir(u'Chia sẻ cho nhau', "", 'sharingTogether', icon)
+        xutils.addDir(u'Thử link', "", 'testLink', icon)
+        xutils.addDir(u'Cấu hình FVideo', "", 'config', icon)
         #(name,url,mode,iconimage,query='',type='folder',page=0):
     else:
         xbmc.executebuiltin("xbmc.Notification('FVideo - message','Login failed')")
         dialog = xbmcgui.Dialog()
         ok = dialog.ok('FVideo - message', 'Login failed (Please check: network or username or password)')
-    
+
 def sharingTogether():
     list = sharinglist.split(",")
     for item in list:
         name = item.strip()
-        xutils.addDir(name, name, 'getFromfile', icon)
+        xutils.addDir(name, name, 'getFromfile', icon)    
+
+def getFromfile():
+    try:
+        file = open(xbmc.translatePath( __settings__.getAddonInfo('profile') ) + url,'r')
+        #file = open(url,'r')
+        for line in file.readlines():
+            try:        
+                list = line.split("##")
+                href = list[1].strip()
+                name = list[0].encode("utf-8")
+                if href.find('fshare.vn/file')>0:
+                    xutils.addDir(name,href , 'lazyLink', icon,name)
+                elif href.find('fshare.vn/folder')>0:
+                    xutils.addDir("["+name+"]", href, 'fshareFolder', icon,name)
+            except:
+                pass
+        file.close()
+    except:               
+        dialog = xbmcgui.Dialog()
+        ok = dialog.ok('FVideo - message', 'Data not found')
+        pass 
     
+def sharingOnline():
+    list = sharingonline.getFileList()
+    for item in list:
+        name = item.strip()
+        xutils.addDir(name, name, 'getFromOnline', icon)    
     #xutils.addDir('Phim hanh dong', "hanhdong.fvideo", 'getFromfile', icon)
     #xutils.addDir('Dac biet', "dacbiet.fvideo", 'getFromfile', icon)
-    
+
+def getFromOnline():
+    elements = sharingonline.getFilmList(url)
+    data = json.loads(elements)
+    for ff in data["files"]:
+        try:
+            xutils.addDir(ff["name"].encode("utf-8"), ff["href"], 'lazyLink', icon,ff["name"].encode("utf-8"))
+        except:
+            pass
+    for ff in data["folders"]:
+        try:
+            xutils.addDir("["+ff["name"].encode("utf-8")+"]", ff["href"], 'fshareFolder', '','')
+        except:
+            pass
+            
 def testLink():    
     xutils.addLink('', "Bau troi mau", 0, 'https://www.fshare.vn/file/KIMSN1RFJ7', '', 'Desc ...',ck)
     xutils.addLink('', "Loi nguyen bong ma", 0, 'https://www.fshare.vn/file/I7N2ABASHN', '', 'Desc ...',ck)
@@ -238,27 +282,6 @@ def filmId():
     xutils.addLink('', "File: " + sinput, 0, hrefFile, '', '',ck)
     xutils.addDir("["+sinput+"]", hrefFolder, 'fshareFolder', icon,sinput)
 
-def getFromfile():
-    try:
-        file = open(xbmc.translatePath( __settings__.getAddonInfo('profile') ) + url,'r')
-        #file = open(url,'r')
-        for line in file.readlines():
-            try:        
-                list = line.split("##")
-                href = list[1].strip()
-                name = list[0].encode("utf-8")
-                if href.find('fshare.vn/file')>0:
-                    xutils.addDir(name,href , 'lazyLink', icon,name)
-                elif href.find('fshare.vn/folder')>0:
-                    xutils.addDir("["+name+"]", href, 'fshareFolder', icon,name)
-            except:
-                pass
-        file.close()
-    except:               
-        dialog = xbmcgui.Dialog()
-        ok = dialog.ok('FVideo - message', 'Data not found')
-        pass 
-        
         
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 url=''
@@ -316,8 +339,12 @@ elif mode=='lazyLink':
     lazyLink()
 elif mode=='fshareFolder':
     fshareGetFileFromFolder("lazyLink")
+elif mode=='sharingOnline':
+    sharingOnline()
+elif mode=='getFromOnline':
+    getFromOnline()    
 elif mode=='sharingTogether':
-    sharingTogether()
+    sharingTogether()    
 elif mode=='getFromfile':
     getFromfile()
 elif mode=='config':

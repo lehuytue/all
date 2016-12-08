@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.fvideo" name="FVideo" version="5.6.4" provider-name="Choehn">
+<addon id="plugin.video.fvideo" name="FVideo" version="5.6.5" provider-name="Choehn">
     <requires>
 		<import addon="xbmc.python" version="2.1.0" />
         <import addon="script.module.beautifulsoup" version="3.0.8"/>
@@ -15,7 +15,6 @@
         <platform>all</platform>
         <language>en</language>
         <summary lang="en"></summary>
-        <description lang="en">Using Fshare account</description>
-		<email>taikhoanonlinevn@gmail.com</email>		
+        <description lang="en">Using Fshare Account</description>
     </extension>
 </addon>
